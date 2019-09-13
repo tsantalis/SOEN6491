@@ -1620,10 +1620,40 @@ public class DateAxis extends ValueAxis implements Cloneable, Serializable {
     protected List refreshTicksHorizontal(Graphics2D g2,
                 Rectangle2D dataArea, RectangleEdge edge) {
 
-        return refresh(g2, dataArea, edge, TextAnchor.CENTER_RIGHT, RectangleEdge.TOP, Math.PI, -Math.PI,
-							TextAnchor.BOTTOM_CENTER, TextAnchor.TOP_CENTER);
+        return refresh(g2, dataArea, edge,
+							(Date tickDate, String tickLabel) -> createTickHorizontal(edge, tickDate, tickLabel));
 
     }
+
+	private Tick createTickHorizontal(RectangleEdge edge, Date tickDate, String tickLabel) {
+		TextAnchor anchor;
+		TextAnchor rotationAnchor;
+		double angle = 0.0;
+		if (isVerticalTickLabels()) {
+		    anchor = TextAnchor.CENTER_RIGHT;
+		    rotationAnchor = TextAnchor.CENTER_RIGHT;
+		    if (edge == RectangleEdge.TOP) {
+		        angle = Math.PI / 2.0;
+		    }
+		    else {
+		        angle = -Math.PI / 2.0;
+		    }
+		}
+		else {
+		    if (edge == RectangleEdge.TOP) {
+		        anchor = TextAnchor.BOTTOM_CENTER;
+		        rotationAnchor = TextAnchor.BOTTOM_CENTER;
+		    }
+		    else {
+		        anchor = TextAnchor.TOP_CENTER;
+		        rotationAnchor = TextAnchor.TOP_CENTER;
+		    }
+		}
+
+		Tick tick = new DateTick(tickDate, tickLabel, anchor,
+		        rotationAnchor, angle);
+		return tick;
+	}
 
     /**
      * Recalculates the ticks for the date axis.
@@ -1637,9 +1667,39 @@ public class DateAxis extends ValueAxis implements Cloneable, Serializable {
     protected List refreshTicksVertical(Graphics2D g2,
             Rectangle2D dataArea, RectangleEdge edge) {
 
-        return refresh(g2, dataArea, edge, TextAnchor.BOTTOM_CENTER, RectangleEdge.LEFT, -Math.PI, Math.PI,
-						TextAnchor.CENTER_RIGHT, TextAnchor.CENTER_LEFT);
+        return refresh(g2, dataArea, edge,
+						(Date tickDate, String tickLabel) -> createTickVertical(edge, tickDate, tickLabel));
     }
+
+	private Tick createTickVertical(RectangleEdge edge, Date tickDate, String tickLabel) {
+		TextAnchor anchor;
+		TextAnchor rotationAnchor;
+		double angle = 0.0;
+		if (isVerticalTickLabels()) {
+		    anchor = TextAnchor.BOTTOM_CENTER;
+		    rotationAnchor = TextAnchor.BOTTOM_CENTER;
+		    if (edge == RectangleEdge.LEFT) {
+		        angle = -Math.PI / 2.0;
+		    }
+		    else {
+		        angle = Math.PI / 2.0;
+		    }
+		}
+		else {
+		    if (edge == RectangleEdge.LEFT) {
+		        anchor = TextAnchor.CENTER_RIGHT;
+		        rotationAnchor = TextAnchor.CENTER_RIGHT;
+		    }
+		    else {
+		        anchor = TextAnchor.CENTER_LEFT;
+		        rotationAnchor = TextAnchor.CENTER_LEFT;
+		    }
+		}
+
+		Tick tick = new DateTick(tickDate, tickLabel, anchor,
+		        rotationAnchor, angle);
+		return tick;
+	}
 
     /**
      * Draws the axis on a Java 2D graphics device (such as the screen or a
@@ -1683,8 +1743,12 @@ public class DateAxis extends ValueAxis implements Cloneable, Serializable {
 
     }
 
-	private java.util.List refresh(Graphics2D g2, Rectangle2D dataArea, RectangleEdge edge, TextAnchor arg0,
-			RectangleEdge arg1, double arg2, double arg3, TextAnchor arg4, TextAnchor arg5) {
+	@FunctionalInterface
+	private interface Interface0 {
+		Tick apply(Date tickDate, String tickLabel);
+	}
+
+	private java.util.List refresh(Graphics2D g2, Rectangle2D dataArea, RectangleEdge edge, Interface0 arg0) {
 		List result = new java.util.ArrayList();
 		Font tickLabelFont = getTickLabelFont();
 		g2.setFont(tickLabelFont);
@@ -1719,25 +1783,7 @@ public class DateAxis extends ValueAxis implements Cloneable, Serializable {
 				}
 				TextAnchor anchor = null;
 				TextAnchor rotationAnchor = null;
-				double angle = 0.0;
-				if (isVerticalTickLabels()) {
-					anchor = arg0;
-					rotationAnchor = arg0;
-					if (edge == arg1) {
-						angle = arg2 / 2.0;
-					} else {
-						angle = arg3 / 2.0;
-					}
-				} else {
-					if (edge == arg1) {
-						anchor = arg4;
-						rotationAnchor = arg4;
-					} else {
-						anchor = arg5;
-						rotationAnchor = arg5;
-					}
-				}
-				Tick tick = new DateTick(tickDate, tickLabel, anchor, rotationAnchor, angle);
+				Tick tick = arg0.apply(tickDate, tickLabel);
 				result.add(tick);
 				long currentTickTime = tickDate.getTime();
 				tickDate = unit.addToDate(tickDate, this.timeZone);
