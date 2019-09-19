@@ -278,7 +278,11 @@ public class DayTests extends IntermediateTestCase {
      * Some checks for the getFirstMillisecond() method.
      */
     public void testGetFirstMillisecond() {
-        testGetFirstMillisecondExtracted(() -> new Day(1, 3, 1970), 5094000000L);
+        testGetFirstMillisecondExtracted(5094000000L);
+    }
+    
+    public RegularTimePeriod createTimePeriod() {
+    	return new Day(1, 3, 1970);
     }
 
     /**

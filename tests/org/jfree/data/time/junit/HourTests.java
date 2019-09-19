@@ -249,7 +249,11 @@ public class HourTests extends IntermediateTestCase {
      * Some checks for the getFirstMillisecond() method.
      */
     public void testGetFirstMillisecond() {
-        testGetFirstMillisecondExtracted(() -> new Hour(15, 1, 4, 2006), 1143900000000L);
+        testGetFirstMillisecondExtracted(1143900000000L);
+    }
+    
+    public RegularTimePeriod createTimePeriod() {
+    	return new Hour(15, 1, 4, 2006);
     }
 
     /**

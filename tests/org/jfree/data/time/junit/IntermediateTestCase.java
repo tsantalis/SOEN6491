@@ -14,14 +14,16 @@ public abstract class IntermediateTestCase extends TestCase {
 		super(name);
 	}
 
-	protected void testGetFirstMillisecondExtracted(Supplier<RegularTimePeriod> arg0, long arg1) {
+	protected void testGetFirstMillisecondExtracted(long arg1) {
 		Locale saved = Locale.getDefault();
 		Locale.setDefault(Locale.UK);
 		TimeZone savedZone = TimeZone.getDefault();
 		TimeZone.setDefault(TimeZone.getTimeZone("Europe/London"));
-		RegularTimePeriod d = arg0.get();
+		RegularTimePeriod d = createTimePeriod();
 		assertEquals(arg1, d.getFirstMillisecond());
 		Locale.setDefault(saved);
 		TimeZone.setDefault(savedZone);
 	}
+	
+	public abstract RegularTimePeriod createTimePeriod();
 }
