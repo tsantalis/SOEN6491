@@ -112,14 +112,8 @@ public final class LineContains
                 line = line.substring(1);
             }
         } else {
-            final int containsSize = contains.size();
-
             for (line = readLine(); line != null; line = readLine()) {
-                boolean matches = true;
-                for (int i = 0; matches && i < containsSize; i++) {
-                    String containsStr = (String) contains.elementAt(i);
-                    matches = line.indexOf(containsStr) >= 0;
-                }
+                boolean matches = matches();
                 if (matches ^ isNegated()) {
                     break;
                 }
@@ -130,6 +124,15 @@ public final class LineContains
         }
         return ch;
     }
+
+	private boolean matches() {
+		boolean matches = true;
+		for (int i = 0; matches && i < contains.size(); i++) {
+		    String containsStr = (String) contains.elementAt(i);
+		    matches = line.indexOf(containsStr) >= 0;
+		}
+		return matches;
+	}
 
     /**
      * Adds a <code>contains</code> element.

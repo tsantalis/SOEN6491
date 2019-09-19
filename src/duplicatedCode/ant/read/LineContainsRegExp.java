@@ -111,16 +111,8 @@ public final class LineContainsRegExp
                 line = line.substring(1);
             }
         } else {
-            final int regexpsSize = regexps.size();
-
             for (line = readLine(); line != null; line = readLine()) {
-                boolean matches = true;
-                for (int i = 0; matches && i < regexpsSize; i++) {
-                    RegularExpression regexp
-                        = (RegularExpression) regexps.elementAt(i);
-                    Regexp re = regexp.getRegexp(getProject());
-                    matches = re.matches(line);
-                }
+                boolean matches = matches();
                 if (matches ^ isNegated()) {
                     break;
                 }
@@ -131,6 +123,17 @@ public final class LineContainsRegExp
         }
         return ch;
     }
+
+	private boolean matches() {
+		boolean matches = true;
+		for (int i = 0; matches && i < regexps.size(); i++) {
+		    RegularExpression regexp
+		        = (RegularExpression) regexps.elementAt(i);
+		    Regexp re = regexp.getRegexp(getProject());
+		    matches = re.matches(line);
+		}
+		return matches;
+	}
 
     /**
      * Adds a <code>regexp</code> element.
