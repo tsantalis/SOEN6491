@@ -59,15 +59,6 @@ public final class LineContains
     private Vector contains = new Vector();
 
     /**
-     * Remaining line to be read from this filter, or <code>null</code> if
-     * the next call to <code>read()</code> should read the original stream
-     * to find the next matching line.
-     */
-    private String line = null;
-
-    private boolean negate = false;
-
-    /**
      * Constructor for "dummy" instances.
      *
      * @see BaseFilterReader#BaseFilterReader()
@@ -97,35 +88,10 @@ public final class LineContains
      * during reading
      */
     public int read() throws IOException {
-        if (!getInitialized()) {
-            initialize();
-            setInitialized(true);
-        }
-
-        int ch = -1;
-
-        if (line != null) {
-            ch = line.charAt(0);
-            if (line.length() == 1) {
-                line = null;
-            } else {
-                line = line.substring(1);
-            }
-        } else {
-            for (line = readLine(); line != null; line = readLine()) {
-                boolean matches = matches();
-                if (matches ^ isNegated()) {
-                    break;
-                }
-            }
-            if (line != null) {
-                return read();
-            }
-        }
-        return ch;
+        return readExtracted();
     }
 
-	private boolean matches() {
+	protected boolean matches() {
 		boolean matches = true;
 		for (int i = 0; matches && i < contains.size(); i++) {
 		    String containsStr = (String) contains.elementAt(i);
@@ -142,22 +108,6 @@ public final class LineContains
      */
     public void addConfiguredContains(final Contains contains) {
         this.contains.addElement(contains.getValue());
-    }
-
-    /**
-     * Set the negation mode.  Default false (no negation).
-     * @param b the boolean negation mode to set.
-     */
-    public void setNegate(boolean b) {
-        negate = b;
-    }
-
-    /**
-     * Find out whether we have been negated.
-     * @return boolean negation flag.
-     */
-    public boolean isNegated() {
-        return negate;
     }
 
     /**
@@ -204,7 +154,7 @@ public final class LineContains
     /**
      * Parses the parameters to add user-defined contains strings.
      */
-    private void initialize() {
+    protected void initialize() {
         Parameter[] params = getParameters();
         if (params != null) {
             for (int i = 0; i < params.length; i++) {

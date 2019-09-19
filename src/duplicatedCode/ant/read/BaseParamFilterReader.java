@@ -17,6 +17,7 @@
  */
 package duplicatedCode.ant.read;
 
+import java.io.IOException;
 import java.io.Reader;
 
 import org.apache.tools.ant.filters.BaseFilterReader;
@@ -72,4 +73,58 @@ public abstract class BaseParamFilterReader
     protected final Parameter[] getParameters() {
         return parameters;
     }
+
+	/**
+	 * Remaining line to be read from this filter, or <code>null</code> if the next call to <code>read()</code> should read the original stream to find the next matching line.
+	 */
+	protected String line = null;
+
+	protected abstract void initialize();
+
+	protected abstract boolean matches();
+
+	/**
+	 * Find out whether we have been negated.
+	 * @return  boolean negation flag.
+	 */
+	public boolean isNegated() {
+		return negate;
+	}
+
+	protected boolean negate = false;
+
+	/**
+	 * Set the negation mode.  Default false (no negation).
+	 * @param b  the boolean negation mode to set.
+	 */
+	public void setNegate(boolean b) {
+		negate = b;
+	}
+
+	protected int readExtracted() throws IOException {
+		if (!getInitialized()) {
+			initialize();
+			setInitialized(true);
+		}
+		int ch = -1;
+		if (line != null) {
+			ch = line.charAt(0);
+			if (line.length() == 1) {
+				line = null;
+			} else {
+				line = line.substring(1);
+			}
+		} else {
+			for (line = readLine(); line != null; line = readLine()) {
+				boolean matches = matches();
+				if (matches ^ isNegated()) {
+					break;
+				}
+			}
+			if (line != null) {
+				return read();
+			}
+		}
+		return ch;
+	}
 }
