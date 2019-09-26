@@ -32,19 +32,7 @@ public class Jar {
                     });
             }
             for (int j = 0; j < resources[0].length; j++) {
-                String name = resources[0][j].getName().replace('\\', '/');
-                if (rcs[i] instanceof ArchiveFileSet) {
-                    ArchiveFileSet afs = (ArchiveFileSet) rcs[i];
-                    if (!"".equals(afs.getFullpath(getProject()))) {
-                        name = afs.getFullpath(getProject());
-                    } else if (!"".equals(afs.getPrefix(getProject()))) {
-                        String prefix = afs.getPrefix(getProject());
-                        if (!prefix.endsWith("/") && !prefix.endsWith("\\")) {
-                            prefix += "/";
-                        }
-                        name = prefix + name;
-                    }
-                }
+                String name = getResourceName(rcs[i], resources[0][j]);
                 if (name.equalsIgnoreCase(MANIFEST_NAME)) {
                     manifests[i] = new Resource[] {resources[0][j]};
                     break;
@@ -55,6 +43,23 @@ public class Jar {
             }
         }
         return manifests;
+    }
+
+    private String getResourceName(ResourceCollection rc, Resource resource) {
+        String name = resource.getName().replace('\\', '/');
+        if (rc instanceof ArchiveFileSet) {
+            ArchiveFileSet afs = (ArchiveFileSet) rc;
+            if (!"".equals(afs.getFullpath(getProject()))) {
+                name = afs.getFullpath(getProject());
+            } else if (!"".equals(afs.getPrefix(getProject()))) {
+                String prefix = afs.getPrefix(getProject());
+                if (!prefix.endsWith("/") && !prefix.endsWith("\\")) {
+                    prefix += "/";
+                }
+                name = prefix + name;
+            }
+        }
+        return name;
     }
 
     public Project getProject() {
