@@ -206,7 +206,25 @@ public class XYPolygonAnnotation extends AbstractXYAnnotation
         if (this.polygon.length < 4) {
             return;
         }
-        PlotOrientation orientation = plot.getOrientation();
+        GeneralPath area = computeArea(plot, dataArea, domainAxis, rangeAxis);
+
+
+        if (this.fillPaint != null) {
+            g2.setPaint(this.fillPaint);
+            g2.fill(area);
+        }
+
+        if (this.stroke != null && this.outlinePaint != null) {
+            g2.setPaint(this.outlinePaint);
+            g2.setStroke(this.stroke);
+            g2.draw(area);
+        }
+        addEntity(info, area, rendererIndex, getToolTipText(), getURL());
+
+    }
+
+	private GeneralPath computeArea(XYPlot plot, Rectangle2D dataArea, ValueAxis domainAxis, ValueAxis rangeAxis) {
+		PlotOrientation orientation = plot.getOrientation();
         RectangleEdge domainEdge = Plot.resolveDomainAxisLocation(
                 plot.getDomainAxisLocation(), orientation);
         RectangleEdge rangeEdge = Plot.resolveRangeAxisLocation(
@@ -239,19 +257,6 @@ public class XYPolygonAnnotation extends AbstractXYAnnotation
             }
             area.closePath();
        }
-
-
-        if (this.fillPaint != null) {
-            g2.setPaint(this.fillPaint);
-            g2.fill(area);
-        }
-
-        if (this.stroke != null && this.outlinePaint != null) {
-            g2.setPaint(this.outlinePaint);
-            g2.setStroke(this.stroke);
-            g2.draw(area);
-        }
-        addEntity(info, area, rendererIndex, getToolTipText(), getURL());
-
-    }
+		return area;
+	}
 }
