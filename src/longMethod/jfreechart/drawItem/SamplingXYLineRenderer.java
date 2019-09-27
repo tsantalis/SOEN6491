@@ -274,7 +274,16 @@ public class SamplingXYLineRenderer extends AbstractXYItemRenderer
         if (!getItemVisible(series, item)) {
             return;
         }
-        State s = computeState(state, dataArea, plot, domainAxis, rangeAxis, dataset, series, item);
+        RectangleEdge xAxisLocation = plot.getDomainAxisEdge();
+        RectangleEdge yAxisLocation = plot.getRangeAxisEdge();
+
+        // get the data point...
+        double x1 = dataset.getXValue(series, item);
+        double y1 = dataset.getYValue(series, item);
+        double transX1 = domainAxis.valueToJava2D(x1, dataArea, xAxisLocation);
+        double transY1 = rangeAxis.valueToJava2D(y1, dataArea, yAxisLocation);
+
+        State s = computeState(state, plot, transX1, transY1);
         // if this is the last item, draw the path ...
         if (item == s.getLastItemIndex()) {
             // draw path
@@ -291,18 +300,8 @@ public class SamplingXYLineRenderer extends AbstractXYItemRenderer
         }
     }
 
-	private State computeState(XYItemRendererState state, Rectangle2D dataArea, XYPlot plot, ValueAxis domainAxis,
-			ValueAxis rangeAxis, XYDataset dataset, int series, int item) {
-		RectangleEdge xAxisLocation = plot.getDomainAxisEdge();
-        RectangleEdge yAxisLocation = plot.getRangeAxisEdge();
-
-        // get the data point...
-        double x1 = dataset.getXValue(series, item);
-        double y1 = dataset.getYValue(series, item);
-        double transX1 = domainAxis.valueToJava2D(x1, dataArea, xAxisLocation);
-        double transY1 = rangeAxis.valueToJava2D(y1, dataArea, yAxisLocation);
-
-        State s = (State) state;
+	private State computeState(XYItemRendererState state, XYPlot plot, double transX1, double transY1) {
+		State s = (State) state;
         // update path to reflect latest point
         if (!Double.isNaN(transX1) && !Double.isNaN(transY1)) {
             float x = (float) transX1;
