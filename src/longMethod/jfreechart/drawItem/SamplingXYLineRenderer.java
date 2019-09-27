@@ -274,7 +274,26 @@ public class SamplingXYLineRenderer extends AbstractXYItemRenderer
         if (!getItemVisible(series, item)) {
             return;
         }
-        RectangleEdge xAxisLocation = plot.getDomainAxisEdge();
+        State s = computeState(state, dataArea, plot, domainAxis, rangeAxis, dataset, series, item);
+        // if this is the last item, draw the path ...
+        if (item == s.getLastItemIndex()) {
+            // draw path
+            PathIterator pi = s.seriesPath.getPathIterator(null);
+            int count = 0;
+            while (!pi.isDone()) {
+                count++;
+                pi.next();
+            }
+            g2.setStroke(getItemStroke(series, item));
+            g2.setPaint(getItemPaint(series, item));
+            g2.draw(s.seriesPath);
+            g2.draw(s.intervalPath);
+        }
+    }
+
+	private State computeState(XYItemRendererState state, Rectangle2D dataArea, XYPlot plot, ValueAxis domainAxis,
+			ValueAxis rangeAxis, XYDataset dataset, int series, int item) {
+		RectangleEdge xAxisLocation = plot.getDomainAxisEdge();
         RectangleEdge yAxisLocation = plot.getRangeAxisEdge();
 
         // get the data point...
@@ -325,21 +344,8 @@ public class SamplingXYLineRenderer extends AbstractXYItemRenderer
         else {
             s.lastPointGood = false;
         }
-        // if this is the last item, draw the path ...
-        if (item == s.getLastItemIndex()) {
-            // draw path
-            PathIterator pi = s.seriesPath.getPathIterator(null);
-            int count = 0;
-            while (!pi.isDone()) {
-                count++;
-                pi.next();
-            }
-            g2.setStroke(getItemStroke(series, item));
-            g2.setPaint(getItemPaint(series, item));
-            g2.draw(s.seriesPath);
-            g2.draw(s.intervalPath);
-        }
-    }
+		return s;
+	}
 
     /**
      * Returns a clone of the renderer.
