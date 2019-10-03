@@ -302,8 +302,8 @@ public class CallNode extends RectangularNode
 	 private static int DEFAULT_HEIGHT = 30;
 	 public static int CALL_YGAP = 20;
 	public ArrayList<Point2D> getPoints(Node startNode) {
-		ArrayList<Point2D> a = new ArrayList<Point2D>();
 		if (this.getImplicitParameter() == ((CallNode) startNode).getImplicitParameter()) {
+			ArrayList<Point2D> a = new ArrayList<Point2D>();
 			Rectangle2D start = startNode.getBounds();
 			Rectangle2D end = this.getBounds();
 			Point2D p = new Point2D.Double(start.getMaxX(), end.getY() - CallNode.CALL_YGAP / 2);
@@ -314,7 +314,10 @@ public class CallNode extends RectangularNode
 			a.add(r);
 			a.add(s);
 			a.add(q);
+			return a;
 		}
-		return a;
+		else {
+			return super.getPoints(startNode);
+		}
 	}
 }
