@@ -47,4 +47,7 @@ public class DragLasso extends DragMode {
 		g2.draw(lasso);
 		g2.setColor(oldColor);
 	}
+
+	public void mouseReleased(Object tool, Point2D mousePoint, GraphPanel graphPanel) {
+	}
 }

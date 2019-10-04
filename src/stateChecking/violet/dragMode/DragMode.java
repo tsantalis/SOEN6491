@@ -10,4 +10,6 @@ public abstract class DragMode {
 	public abstract void mouseDragged(Point2D mousePoint, boolean isCtrl, GraphPanel graphPanel);
 
 	public abstract void paintComponent(Graphics2D g2, GraphPanel graphPanel);
+
+	public abstract void mouseReleased(Object tool, Point2D mousePoint, GraphPanel graphPanel);
 }

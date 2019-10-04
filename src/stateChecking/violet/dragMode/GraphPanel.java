@@ -238,7 +238,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		selectedItems.remove(obj);
 	}
 
-	private void setSelectedItem(Object obj)
+	public void setSelectedItem(Object obj)
 	{
 		selectedItems.clear();
 		lastSelected = obj;
@@ -331,22 +331,7 @@ public class GraphPanel extends JPanel implements MouseListener, MouseMotionList
 		Point2D mousePoint = new Point2D.Double(event.getX() / zoom,
 				event.getY() / zoom);
 		Object tool = toolBar.getSelectedTool();
-		if (getDragMode() == DRAG_RUBBERBAND)
-		{
-			Edge prototype = (Edge) tool;
-			Edge newEdge = (Edge) prototype.clone();
-			if (mousePoint.distance(mouseDownPoint) > CONNECT_THRESHOLD
-					&& graph.connect(newEdge, mouseDownPoint, mousePoint))
-			{
-				setModified(true);
-				setSelectedItem(newEdge);
-			}
-		}
-		else if (getDragMode() == DRAG_MOVE)
-		{
-			graph.layout();
-			setModified(true);
-		}
+		dragMode.mouseReleased(tool, mousePoint, this);
 
 		setDragMode(DRAG_NONE);
 
