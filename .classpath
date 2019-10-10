@@ -7,6 +7,7 @@
 	<classpathentry kind="lib" path="lib/jfreechart-1.0.14.jar" sourcepath="lib/jfreechart-1.0.14-source.zip"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="lib" path="lib/violet-0.16a.jar"/>
+	<classpathentry kind="lib" path="lib/jhotdraw.jar"/>
 	<classpathentry kind="src" path="tests"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
