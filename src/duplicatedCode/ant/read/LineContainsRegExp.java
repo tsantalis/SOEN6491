@@ -88,15 +88,15 @@ public final class LineContainsRegExp
      */
     public int read() throws IOException {
         return readExtracted(() -> {
-    		boolean matches = true;
+    		boolean match = true;
     		Project project = getProject();
-    		for (int i = 0; matches && i < regexps.size(); i++) {
+    		for (int i = 0; match && i < regexps.size(); i++) {
     		    RegularExpression regexp
     		        = (RegularExpression) regexps.elementAt(i);
 				Regexp re = regexp.getRegexp(project);
-    		    matches = re.matches(line);
+    		    match = re.matches(line);
     		}
-    		return matches;
+    		return match;
     	});
     }
 

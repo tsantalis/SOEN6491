@@ -89,12 +89,12 @@ public final class LineContains
      */
     public int read() throws IOException {
         return readExtracted(() -> {
-    		boolean matches = true;
-    		for (int i = 0; matches && i < contains.size(); i++) {
+    		boolean match = true;
+    		for (int i = 0; match && i < contains.size(); i++) {
     		    String containsStr = (String) contains.elementAt(i);
-    		    matches = line.indexOf(containsStr) >= 0;
+    		    match = line.indexOf(containsStr) >= 0;
     		}
-    		return matches;
+    		return match;
     	});
     }
 
