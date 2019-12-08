@@ -87,19 +87,17 @@ public final class LineContainsRegExp
      * during reading
      */
     public int read() throws IOException {
-        return readExtracted();
+        return readExtracted(() -> {
+    		boolean matches = true;
+    		for (int i = 0; matches && i < regexps.size(); i++) {
+    		    RegularExpression regexp
+    		        = (RegularExpression) regexps.elementAt(i);
+    		    Regexp re = regexp.getRegexp(getProject());
+    		    matches = re.matches(line);
+    		}
+    		return matches;
+    	});
     }
-
-	protected boolean matches() {
-		boolean matches = true;
-		for (int i = 0; matches && i < regexps.size(); i++) {
-		    RegularExpression regexp
-		        = (RegularExpression) regexps.elementAt(i);
-		    Regexp re = regexp.getRegexp(getProject());
-		    matches = re.matches(line);
-		}
-		return matches;
-	}
 
     /**
      * Adds a <code>regexp</code> element.

@@ -19,6 +19,7 @@ package duplicatedCode.ant.read;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.function.Supplier;
 
 import org.apache.tools.ant.filters.BaseFilterReader;
 import org.apache.tools.ant.types.Parameter;
@@ -81,8 +82,6 @@ public abstract class BaseParamFilterReader
 
 	protected abstract void initialize();
 
-	protected abstract boolean matches();
-
 	/**
 	 * Find out whether we have been negated.
 	 * @return  boolean negation flag.
@@ -101,7 +100,7 @@ public abstract class BaseParamFilterReader
 		negate = b;
 	}
 
-	protected int readExtracted() throws IOException {
+	protected int readExtracted(Supplier<Boolean> matcher) throws IOException {
 		if (!getInitialized()) {
 			initialize();
 			setInitialized(true);
@@ -116,7 +115,7 @@ public abstract class BaseParamFilterReader
 			}
 		} else {
 			for (line = readLine(); line != null; line = readLine()) {
-				boolean matches = matches();
+				boolean matches = matcher.get();
 				if (matches ^ isNegated()) {
 					break;
 				}

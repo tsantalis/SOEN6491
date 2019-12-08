@@ -88,17 +88,15 @@ public final class LineContains
      * during reading
      */
     public int read() throws IOException {
-        return readExtracted();
+        return readExtracted(() -> {
+    		boolean matches = true;
+    		for (int i = 0; matches && i < contains.size(); i++) {
+    		    String containsStr = (String) contains.elementAt(i);
+    		    matches = line.indexOf(containsStr) >= 0;
+    		}
+    		return matches;
+    	});
     }
-
-	protected boolean matches() {
-		boolean matches = true;
-		for (int i = 0; matches && i < contains.size(); i++) {
-		    String containsStr = (String) contains.elementAt(i);
-		    matches = line.indexOf(containsStr) >= 0;
-		}
-		return matches;
-	}
 
     /**
      * Adds a <code>contains</code> element.
