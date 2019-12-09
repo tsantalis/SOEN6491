@@ -91,8 +91,7 @@ public final class LineContains
         return readExtracted(() -> {
     		boolean match = true;
     		for (int i = 0; match && i < contains.size(); i++) {
-    		    String containsStr = (String) contains.elementAt(i);
-    		    match = line.indexOf(containsStr) >= 0;
+    		    match = line.indexOf((String) contains.elementAt(i)) >= 0;
     		}
     		return match;
     	});

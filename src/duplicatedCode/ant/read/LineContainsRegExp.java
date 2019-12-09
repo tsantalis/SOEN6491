@@ -93,8 +93,7 @@ public final class LineContainsRegExp
     		for (int i = 0; match && i < regexps.size(); i++) {
     		    RegularExpression regexp
     		        = (RegularExpression) regexps.elementAt(i);
-				Regexp re = regexp.getRegexp(project);
-    		    match = re.matches(line);
+				match = regexp.getRegexp(project).matches(line);
     		}
     		return match;
     	});
