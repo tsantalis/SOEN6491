@@ -124,7 +124,7 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.axis.CategoryAxis;
@@ -1852,8 +1852,8 @@ public abstract class AbstractCategoryItemRenderer extends AbstractRenderer
 
 	public abstract boolean getSeriesShapesFilled(int series);
 
-	protected LegendItem getLegendItemExtracted(int series, int datasetIndex, Supplier<Boolean> arg0,
-			Supplier<Boolean> arg1, boolean thisUseFillPaint, boolean thisDrawOutlines, boolean thisUseOutlinePaint) {
+	protected LegendItem getLegendItemExtracted(int series, int datasetIndex, BooleanSupplier arg0,
+			BooleanSupplier arg1, boolean thisUseFillPaint, boolean thisDrawOutlines, boolean thisUseOutlinePaint) {
 		CategoryPlot cp = getPlot();
 		if (cp == null) {
 			return null;
@@ -1876,9 +1876,9 @@ public abstract class AbstractCategoryItemRenderer extends AbstractRenderer
 			boolean shapeOutlineVisible = thisDrawOutlines;
 			Paint outlinePaint = (thisUseOutlinePaint ? getItemOutlinePaint(series, 0) : paint);
 			Stroke outlineStroke = lookupSeriesOutlineStroke(series);
-			LegendItem result = new LegendItem(label, description, toolTipText, urlText, (boolean) arg0.get(), shape,
+			LegendItem result = new LegendItem(label, description, toolTipText, urlText, arg0.getAsBoolean(), shape,
 					getItemShapeFilled(series, 0), fillPaint, shapeOutlineVisible, outlinePaint, outlineStroke,
-					(boolean) arg1.get(), new Line2D.Double(-7.0, 0.0, 7.0, 0.0), getItemStroke(series, 0),
+					arg1.getAsBoolean(), new Line2D.Double(-7.0, 0.0, 7.0, 0.0), getItemStroke(series, 0),
 					getItemPaint(series, 0));
 			result.setLabelFont(lookupLegendTextFont(series));
 			Paint labelPaint = lookupLegendTextPaint(series);
