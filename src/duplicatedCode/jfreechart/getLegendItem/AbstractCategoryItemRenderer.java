@@ -124,6 +124,7 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import org.jfree.chart.LegendItem;
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.axis.CategoryAxis;
@@ -1838,6 +1839,60 @@ public abstract class AbstractCategoryItemRenderer extends AbstractRenderer
         this.itemURLGenerator = generator;
         fireChangeEvent();
     }
+
+	/**
+	 * Returns the flag used to control whether or not the shape for an item is filled. The default implementation passes control to the <code>getSeriesShapesFilled</code> method. You can override this method if you require different behaviour.
+	 * @param series   the series index (zero-based).
+	 * @param item   the item index (zero-based).
+	 * @return  A boolean.
+	 */
+	public boolean getItemShapeFilled(int series, int item) {
+		return getSeriesShapesFilled(series);
+	}
+
+	public abstract boolean getSeriesShapesFilled(int series);
+
+	protected LegendItem getLegendItemExtracted(int series, int datasetIndex, Supplier<Boolean> arg0,
+			Supplier<Boolean> arg1, boolean thisUseFillPaint, boolean thisDrawOutlines, boolean thisUseOutlinePaint) {
+		CategoryPlot cp = getPlot();
+		if (cp == null) {
+			return null;
+		}
+		if (isSeriesVisible(series) && isSeriesVisibleInLegend(series)) {
+			CategoryDataset dataset = cp.getDataset(datasetIndex);
+			String label = getLegendItemLabelGenerator().generateLabel(dataset, series);
+			String description = label;
+			String toolTipText = null;
+			if (getLegendItemToolTipGenerator() != null) {
+				toolTipText = getLegendItemToolTipGenerator().generateLabel(dataset, series);
+			}
+			String urlText = null;
+			if (getLegendItemURLGenerator() != null) {
+				urlText = getLegendItemURLGenerator().generateLabel(dataset, series);
+			}
+			Shape shape = lookupLegendShape(series);
+			Paint paint = lookupSeriesPaint(series);
+			Paint fillPaint = (thisUseFillPaint ? getItemFillPaint(series, 0) : paint);
+			boolean shapeOutlineVisible = thisDrawOutlines;
+			Paint outlinePaint = (thisUseOutlinePaint ? getItemOutlinePaint(series, 0) : paint);
+			Stroke outlineStroke = lookupSeriesOutlineStroke(series);
+			LegendItem result = new LegendItem(label, description, toolTipText, urlText, (boolean) arg0.get(), shape,
+					getItemShapeFilled(series, 0), fillPaint, shapeOutlineVisible, outlinePaint, outlineStroke,
+					(boolean) arg1.get(), new Line2D.Double(-7.0, 0.0, 7.0, 0.0), getItemStroke(series, 0),
+					getItemPaint(series, 0));
+			result.setLabelFont(lookupLegendTextFont(series));
+			Paint labelPaint = lookupLegendTextPaint(series);
+			if (labelPaint != null) {
+				result.setLabelPaint(labelPaint);
+			}
+			result.setDataset(dataset);
+			result.setDatasetIndex(datasetIndex);
+			result.setSeriesKey(dataset.getRowKey(series));
+			result.setSeriesIndex(series);
+			return result;
+		}
+		return null;
+	}
 
 
 }
