@@ -399,12 +399,10 @@ public class LineAndShapeRenderer extends AbstractCategoryItemRenderer
             Paint outlinePaint = (this.useOutlinePaint
                     ? getItemOutlinePaint(series, 0) : paint);
             Stroke outlineStroke = lookupSeriesOutlineStroke(series);
-            boolean lineVisible = getItemLineVisible(series, 0);
-            boolean shapeVisible = getItemShapeVisible(series, 0);
             LegendItem result = new LegendItem(label, description, toolTipText,
-                    urlText, shapeVisible, shape, getItemShapeFilled(series, 0),
+                    urlText, getItemShapeVisible(series, 0), shape, getItemShapeFilled(series, 0),
                     fillPaint, shapeOutlineVisible, outlinePaint, outlineStroke,
-                    lineVisible, new Line2D.Double(-7.0, 0.0, 7.0, 0.0),
+                    getItemLineVisible(series, 0), new Line2D.Double(-7.0, 0.0, 7.0, 0.0),
                     getItemStroke(series, 0), getItemPaint(series, 0));
             result.setLabelFont(lookupLegendTextFont(series));
             Paint labelPaint = lookupLegendTextPaint(series);
